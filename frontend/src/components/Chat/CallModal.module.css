@@ -1,0 +1,34 @@
+.callModal {
+    /* Ensure modal is visible above other elements */
+}
+
+.callModal :global(.ant-modal-content) {
+    border-radius: 8px;
+}
+
+.modalContent {
+    padding: 24px 0;
+    text-align: center;
+}
+
+.voiceButton {
+    background-color: #1890ff;
+    border-color: #1890ff;
+    font-size: 16px;
+    height: 48px;
+}
+
+.voiceButton:hover {
+    background-color: #40a9ff;
+    border-color: #40a9ff;
+}
+
+.videoButton {
+    font-size: 16px;
+    height: 48px;
+}
+
+.videoButton:hover {
+    background-color: #36cfc9;
+    border-color: #36cfc9;
+}

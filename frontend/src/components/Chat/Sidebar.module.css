@@ -1,0 +1,594 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-right: 1px solid #eee;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+}
+
+.headerActions {
+    display: flex;
+    gap: 8px;
+}
+
+.headerBtn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.headerBtn:hover {
+    background: #e0e0e0;
+}
+
+.searchContainer {
+    position: relative;
+    padding: 8px 16px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    border: 1px solid #eee;
+    border-radius: 24px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+    border-color: #007bff;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 14px;
+}
+
+.listContainer {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 233px);
+}
+
+.listContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.listContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.listContainer::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.listContainer::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.list {
+    padding: 8px 8px;
+}
+
+.conversationItem,
+.userItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.conversationItem:hover,
+.userItem:hover {
+    background: #f5f5f5;
+}
+
+.conversationItem.selected {
+    background: #e3eeff;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.convInfo,
+.userInfo {
+    flex: 1;
+    min-width: 0;
+    line-height: normal;
+}
+
+.convName,
+.userName {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.memberCount {
+    font-size: 11px;
+    color: #8c8c8c;
+    margin-top: 1px;
+    margin-bottom: 2px;
+}
+
+.convPreview,
+.userEmail {
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.convActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.convTime {
+    font-size: 11px;
+    color: #999;
+    flex-shrink: 0;
+    white-space: nowrap;
+    align-self: flex-start;
+    opacity: 1;
+    transition: opacity 0.2s;
+}
+
+.conversationItem:hover .convTime {
+    opacity: 0;
+    display: none;
+}
+
+.menuBtn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition:
+        background 0.2s,
+        color 0.2s;
+    padding: 0;
+}
+
+.conversationItem:hover .menuBtn {
+    display: flex;
+}
+
+.menuBtn:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.dropdownMenu {
+    position: fixed;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    min-width: 160px;
+    overflow: hidden;
+}
+
+.menuOption {
+    padding: 15px 20px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.menuOption:hover {
+    background: #f5f5f5;
+}
+
+.menuOption:first-child {
+    border-top: none;
+}
+
+.menuOption:last-child {
+    border-bottom: none;
+}
+
+.placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #999;
+    font-size: 14px;
+    gap: 12px;
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.modalHeader h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+}
+
+.closeBtn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.closeBtn:hover {
+    background: #e0e0e0;
+}
+
+.modalSearchContainer {
+    position: relative;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.modalSearchInput {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.modalSearchInput:focus {
+    border-color: #007bff;
+}
+
+.modalSearchInput::placeholder {
+    color: #999;
+}
+
+.modalResults {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.modalResults::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modalResults::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modalResults::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.modalResults::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.modalUserItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modalUserItem:hover {
+    background: #f5f5f5;
+}
+
+.modalAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.modalUserInfo {
+    line-height: normal;
+    flex: 1;
+    min-width: 0;
+}
+
+.modalUserName {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modalUserEmail,
+.modalUserPhone {
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.selectBtn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.selectBtn:hover {
+    background: #0056b3;
+}
+
+.loadingSpinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    gap: 12px;
+    color: #999;
+    font-size: 14px;
+}
+
+.noResults {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #999;
+    font-size: 14px;
+}
+
+/* Delete Modal Styles */
+.deleteModal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.deleteModalHeader {
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.deleteModalHeader h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #d32f2f;
+}
+
+.deleteModalBody {
+    padding: 24px;
+    flex: 1;
+}
+
+.deleteModalBody p {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+}
+
+.deleteModalBody p strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.deleteWarning {
+    color: #d32f2f;
+    font-size: 13px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.errorMessage {
+    color: #d32f2f;
+    font-size: 14px;
+    padding: 12px;
+    background: #ffebee;
+    border-radius: 6px;
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.deleteModalFooter {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #eee;
+    justify-content: flex-end;
+}
+
+.cancelBtn {
+    padding: 10px 24px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background: #f5f5f5;
+    border-color: #ccc;
+    color: #333;
+}
+
+.cancelBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.deleteBtn {
+    padding: 10px 24px;
+    border: none;
+    background: #d32f2f;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.deleteBtn:hover:not(:disabled) {
+    background: #b71c1c;
+}
+
+.deleteBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}

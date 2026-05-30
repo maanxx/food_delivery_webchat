@@ -1,0 +1,147 @@
+.microphoneReactionContainer {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Size variants */
+.sizeSmall {
+    width: 60px;
+    height: 60px;
+}
+
+.sizeMedium {
+    width: 90px;
+    height: 90px;
+}
+
+.sizeLarge {
+    width: 120px;
+    height: 120px;
+}
+
+/* Vòng tròn sóng phản ứng */
+.ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(82, 196, 26, 0.5);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-out infinite;
+    transition:
+        transform 0.1s ease-out,
+        opacity 0.2s ease-out;
+}
+
+.ring:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.ring:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.ring:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.ring:nth-child(4) {
+    animation-delay: 0.9s;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* Vòng tròn chính với mic icon */
+.center {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #52c41a, #389e0d);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(82, 196, 26, 0.4);
+    z-index: 10;
+}
+
+.center:hover {
+    box-shadow: 0 4px 12px rgba(82, 196, 26, 0.6);
+}
+
+.micIcon {
+    width: 28px;
+    height: 28px;
+    color: white;
+    animation: micBounce 0.3s ease-in-out;
+}
+
+@keyframes micBounce {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Thanh hiển thị mức âm thanh */
+.levelBar {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.levelFill {
+    height: 100%;
+    background: linear-gradient(90deg, #52c41a, #13c2c2);
+    border-radius: 2px;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 8px rgba(82, 196, 26, 0.6);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .microphoneReactionContainer {
+        width: 100px;
+        height: 100px;
+    }
+
+    .center {
+        width: 50px;
+        height: 50px;
+    }
+
+    .micIcon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .levelBar {
+        bottom: -25px;
+    }
+}

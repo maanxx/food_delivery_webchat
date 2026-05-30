@@ -1,0 +1,126 @@
+.emptyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    text-align: center;
+}
+
+.illustration {
+    margin-bottom: 24px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.5px;
+}
+
+.description {
+    font-size: 14px;
+    color: #65676b;
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+    max-width: 300px;
+}
+
+.features {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.featureItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.featureItem:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+    font-size: 28px;
+    display: block;
+}
+
+.text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+}
+
+.hint {
+    font-size: 14px;
+    color: #65676b;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.hint strong {
+    color: #000;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .emptyContainer {
+        padding: 30px 15px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .description {
+        font-size: 13px;
+    }
+
+    .features {
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .featureItem {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
+    .icon {
+        font-size: 24px;
+    }
+
+    .hint {
+        font-size: 12px;
+    }
+}

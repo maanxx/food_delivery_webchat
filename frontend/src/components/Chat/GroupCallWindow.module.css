@@ -1,0 +1,158 @@
+.groupCallWindow {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #000;
+    color: #fff;
+}
+
+.videoGrid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
+    padding: 16px;
+    overflow: auto;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+
+.videoTile {
+    position: relative;
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border: 2px solid #333;
+    transition: border-color 0.3s ease;
+}
+
+.videoTile:hover {
+    border-color: #1890ff;
+}
+
+.videoElement {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.videoPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
+}
+
+.participantInfo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.participantName {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.videoOffBadge,
+.mutedBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 4px 8px;
+    background: rgba(255, 77, 79, 0.8);
+    border-radius: 4px;
+    width: fit-content;
+}
+
+.callInfo {
+    padding: 16px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-top: 1px solid #333;
+}
+
+.callInfo h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.duration {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 8px 0;
+    color: #1890ff;
+    font-family: "Courier New", monospace;
+}
+
+.participantCount {
+    font-size: 12px;
+    color: #999;
+    margin: 4px 0 0;
+}
+
+.controls {
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.8);
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: center;
+}
+
+.controlBtn {
+    min-width: 100px;
+    height: 40px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.endCallBtn {
+    background-color: #ff4d4f !important;
+}
+
+.endCallBtn:hover {
+    background-color: #ff7875 !important;
+}
+
+.emptyState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .videoGrid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .videoGrid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .controls {
+        padding: 12px;
+    }
+
+    .controlBtn {
+        min-width: 80px;
+        height: 36px;
+        font-size: 12px;
+    }
+}

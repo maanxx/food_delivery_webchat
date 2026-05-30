@@ -1,0 +1,173 @@
+.voiceRecorderContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+}
+
+.recordingIndicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background-color: #fff;
+    border-radius: 6px;
+    border: 1px solid #ff4d4f;
+}
+
+.recordingDot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #ff4d4f;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.recordingText {
+    font-weight: 500;
+    color: #ff4d4f;
+    font-size: 14px;
+}
+
+.recordingTime {
+    margin-left: auto;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1890ff;
+}
+
+.recordingActions {
+    display: flex;
+    gap: 8px;
+}
+
+.cancelBtn,
+.stopBtn,
+.recordBtn,
+.recordAgainBtn,
+.deleteBtn,
+.sendBtn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancelBtn {
+    background-color: #f5f5f5;
+    color: #8c8c8c;
+}
+
+.cancelBtn:hover {
+    background-color: #e6e6e6;
+    color: #595959;
+}
+
+.stopBtn {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+.stopBtn:hover {
+    background-color: #ff7875;
+}
+
+.recordBtn {
+    background-color: #1890ff;
+    color: white;
+    width: 100%;
+}
+
+.recordBtn:hover {
+    background-color: #40a9ff;
+}
+
+.recordBtn:active {
+    background-color: #096dd9;
+}
+
+.playbackSection {
+    padding: 8px;
+}
+
+.audioPlayer {
+    width: 100%;
+    max-height: 32px;
+}
+
+.playbackActions {
+    display: flex;
+    gap: 8px;
+}
+
+.deleteBtn {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f5f5f5;
+    color: #8c8c8c;
+}
+
+.deleteBtn:hover {
+    background-color: #e0e0e0;
+    color: #595959;
+}
+
+.sendBtn {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #52c41a;
+    color: white;
+}
+
+.sendBtn:hover {
+    background-color: #73d13d;
+}
+
+.sendBtn:active {
+    background-color: #389e0d;
+}
+
+.errorMessage {
+    padding: 8px 12px;
+    background-color: #fff1f0;
+    border: 1px solid #ffccc7;
+    border-radius: 6px;
+    color: #ff4d4f;
+    font-size: 14px;
+}

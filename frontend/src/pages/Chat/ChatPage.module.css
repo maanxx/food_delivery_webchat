@@ -1,0 +1,52 @@
+.chatPage {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: white;
+    overflow: hidden;
+}
+
+.sidebarWrapper {
+    width: 320px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-right: 1px solid #eee;
+    overflow: hidden;
+}
+
+.chatWrapper {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chatPage {
+        flex-direction: column;
+    }
+
+    .sidebarWrapper {
+        width: 100%;
+        height: 350px;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        overflow-y: auto;
+    }
+
+    .chatWrapper {
+        flex: 1;
+        min-height: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebarWrapper {
+        height: 250px;
+    }
+}

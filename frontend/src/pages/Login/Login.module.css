@@ -1,67 +1,334 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Đảm bảo reset margin toàn bộ trang để giao diện thực sự full màn hình */
+:global(body), :global(html) {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .loginContainer {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f5f5f5;
-}
-
-.loginBox {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  min-height: 100vh;
   width: 100%;
-  max-width: 400px;
-}
-
-.loginBox h2 {
-  margin-bottom: 20px;
-  text-align: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #ffffff;
   color: #333;
 }
 
-.formGroup {
-  margin-bottom: 15px;
+@media (min-width: 900px) {
+  .loginContainer {
+    flex-direction: row;
+  }
 }
 
-.formGroup label {
+/* LEFT PANEL - BRANDING */
+.brandingPanel {
+  flex: 1;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #FF9A44 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+}
+
+@media (max-width: 899px) {
+  .brandingPanel {
+    flex: 0 0 auto;
+    padding: 60px 20px;
+  }
+  .brandingPanel::before,
+  .brandingPanel::after {
+    display: none;
+  }
+}
+
+.brandingPanel::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+.brandingPanel::after {
+  content: "";
+  position: absolute;
+  bottom: -150px;
+  left: -50px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 1;
+}
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 500px;
+  text-align: center;
+  z-index: 2;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: float 6s ease-in-out infinite;
+}
+
+@media (max-width: 899px) {
+  .glassCard {
+    padding: 30px 20px;
+    animation: none;
+  }
+  .glassCard h1 {
+    font-size: 24px !important;
+  }
+  .brandLogo {
+    font-size: 48px !important;
+    margin-bottom: 16px !important;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.brandLogo {
+  font-size: 64px;
+  margin-bottom: 24px;
   display: block;
-  margin-bottom: 5px;
-  color: #666;
 }
 
-.formGroup input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.glassCard h1 {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.glassCard p {
+  color: rgba(255, 255, 255, 0.95);
   font-size: 16px;
+  line-height: 1.6;
 }
 
-.loginBox button {
+/* RIGHT PANEL - FORM */
+.formPanel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px;
+  background-color: #ffffff;
+}
+
+.loginCard {
   width: 100%;
-  padding: 12px;
-  background-color: #1976d2;
+  max-width: 420px;
+}
+
+.formHeader {
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.formHeader h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.formHeader p {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.errorBox {
+  background-color: #fef2f2;
+  color: #ef4444;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #fecaca;
+}
+
+/* FLOATING LABEL INPUTS */
+.floatingGroup {
+  position: relative;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  color: #9ca3af;
+  display: flex;
+  z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.floatingInput {
+  width: 100%;
+  /* padding top/bottom adjusted to make room for the floating label */
+  padding: 24px 16px 8px 48px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #111827;
+  background-color: #f9fafb;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.floatingInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+}
+
+.floatingInput:focus ~ .inputIcon {
+  color: var(--primary-color);
+}
+
+.floatingLabel {
+  position: absolute;
+  left: 48px;
+  top: 16px;
+  font-size: 15px;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+
+/* Triggers floating effect when input is focused OR has value */
+.floatingInput:focus ~ .floatingLabel,
+.floatingInput:not(:placeholder-shown) ~ .floatingLabel {
+  top: 8px;
+  font-size: 11px;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.2s, background-color 0.2s;
+  z-index: 2;
+}
+
+.passwordToggle:hover {
+  color: #4b5563;
+  background-color: #f3f4f6;
+}
+
+/* CHECKBOX ROW */
+.optionsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.rememberMe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.rememberMe input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.forgotPassword {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.forgotPassword:hover {
+  color: #E65100;
+  text-decoration: underline;
+}
+
+/* BUTTON */
+.submitBtn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #E65100 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
-.loginBox button:hover {
-  background-color: #1565c0;
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
 }
 
-.loginBox button:disabled {
-  background-color: #ccc;
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  background: #d1d5db;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.error {
-  color: red;
-  margin-bottom: 15px;
-  text-align: center;
+.animateSpin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

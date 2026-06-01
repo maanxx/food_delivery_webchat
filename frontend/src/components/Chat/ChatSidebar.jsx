@@ -112,7 +112,7 @@ const ChatSidebar = ({ conversation, currentUserId, onClose, onOpenGroupSettings
                                     <Avatar
                                         size={32}
                                         src={member.avatarPath || member.avatar_path}
-                                        style={{ backgroundColor: "#1890ff" }}
+                                        style={{ backgroundColor: "var(--primary-color)" }}
                                     >
                                         {!member.avatarPath && !member.avatar_path
                                             ? getFirstLetterOfEachWord(member.fullname || member.username || "U")
@@ -252,7 +252,7 @@ const ChatSidebar = ({ conversation, currentUserId, onClose, onOpenGroupSettings
                     <Avatar
                         size={64}
                         src={conversation?.avatarPath || conversation?.avatar_path}
-                        style={{ backgroundColor: "#1890ff" }}
+                        style={{ backgroundColor: "var(--primary-color)" }}
                     >
                         {!conversation?.avatarPath && !conversation?.avatar_path && conversation?.name
                             ? getFirstLetterOfEachWord(conversation.name).children

@@ -7,7 +7,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgba(15, 10, 30, 0.97) 0%, rgba(30, 15, 55, 0.97) 100%);
+    backdrop-filter: blur(24px);
     z-index: 1000;
 }
 
@@ -17,13 +18,27 @@
     align-items: center;
     text-align: center;
     color: white;
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 48px 40px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 28px;
+    border: 1px solid rgba(167, 80, 255, 0.2);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(167, 80, 255, 0.1);
+    min-width: 320px;
 }
 
 .callTypeLabel {
-    font-size: 16px;
+    font-size: 15px;
     margin-top: 10px;
-    opacity: 0.9;
+    opacity: 0.8;
+    letter-spacing: 0.3px;
+}
+
+.callerSubtitle {
+    font-size: 13px;
+    opacity: 0.6;
+    margin-top: 6px;
 }
 
 .callContainer {
@@ -32,7 +47,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #0f0f0f;
+    background: linear-gradient(160deg, #0d0618 0%, #120a22 40%, #1a0e30 100%);
     display: flex;
     flex-direction: column;
     z-index: 1000;
@@ -40,7 +55,7 @@
 
 .remoteVideoContainer {
     flex: 1;
-    background-color: #000;
+    background: transparent;
     position: relative;
     display: flex;
     align-items: center;
@@ -65,7 +80,7 @@
 .duration {
     font-size: 32px;
     font-weight: bold;
-    color: #52c41a;
+    color: #ff6b35;
     margin: 0;
     font-family: "Courier New", monospace;
 }
@@ -73,9 +88,9 @@
 .audioVisualization {
     width: 300px;
     height: 100px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(167, 80, 255, 0.08);
+    border: 1px solid rgba(167, 80, 255, 0.2);
 }
 
 .video {
@@ -90,13 +105,14 @@
     right: 20px;
     width: 150px;
     height: 120px;
-    border: 3px solid white;
-    border-radius: 8px;
+    border: 2px solid rgba(167, 80, 255, 0.6);
+    border-radius: 12px;
     overflow: visible;
-    background-color: #000;
+    background-color: #0d0618;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .localVideo {
@@ -106,7 +122,7 @@
     transform: scaleX(-1);
     position: absolute;
     z-index: 1;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .cameraOffPlaceholder {
@@ -115,11 +131,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #262626;
+    background: linear-gradient(135deg, #1a0e30, #0d0618);
     color: white;
     position: absolute;
     z-index: 1;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .localMicReaction {
@@ -130,13 +146,13 @@
 }
 
 .callControls {
-    background: rgba(42, 42, 42, 0.8);
-    backdrop-filter: blur(20px);
-    padding: 24px 40px;
+    background: rgba(13, 6, 24, 0.85);
+    backdrop-filter: blur(24px);
+    padding: 20px 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(167, 80, 255, 0.15);
     position: absolute;
     bottom: 0;
     left: 0;
@@ -153,98 +169,115 @@
 .callStatusIndicator {
     width: 8px;
     height: 8px;
-    background-color: #52c41a;
+    background: linear-gradient(135deg, #a750ff, #ff6b35);
     border-radius: 50%;
-    box-shadow: 0 0 8px #52c41a;
+    box-shadow: 0 0 10px rgba(167, 80, 255, 0.8);
     animation: blink 2s infinite;
 }
 
 @keyframes blink {
     0% {
         opacity: 1;
+        box-shadow: 0 0 10px rgba(167, 80, 255, 0.8);
     }
     50% {
         opacity: 0.4;
+        box-shadow: 0 0 4px rgba(167, 80, 255, 0.3);
     }
     100% {
         opacity: 1;
+        box-shadow: 0 0 10px rgba(167, 80, 255, 0.8);
     }
 }
 
 .mainControls {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
 }
 
 .callInfo {
-    color: white;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 14px;
     font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
 .endCallBtn {
-    background-color: #ff4d4f;
-    border-color: #ff4d4f;
-    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: linear-gradient(135deg, #ff3b5c, #ff1744) !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 20px rgba(255, 23, 68, 0.45) !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
 .endCallBtn:hover {
-    background-color: #ff7875;
-    border-color: #ff7875;
-    transform: scale(1.1);
+    background: linear-gradient(135deg, #ff6080, #ff3b5c) !important;
+    transform: scale(1.12) !important;
+    box-shadow: 0 8px 28px rgba(255, 23, 68, 0.6) !important;
 }
 
 .acceptBtn {
-    background-color: #52c41a !important;
-    border-color: #52c41a !important;
-    box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: linear-gradient(135deg, #3cca6e, #25b259) !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 20px rgba(37, 178, 89, 0.4) !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
 .acceptBtn:hover {
-    transform: scale(1.1);
-    background-color: #73d13d !important;
+    transform: scale(1.12) !important;
+    box-shadow: 0 8px 28px rgba(37, 178, 89, 0.6) !important;
 }
 
 .rejectBtn {
-    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: linear-gradient(135deg, #ff3b5c, #ff1744) !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 20px rgba(255, 23, 68, 0.4) !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
 .rejectBtn:hover {
-    transform: scale(1.1);
+    transform: scale(1.12) !important;
 }
 
 .controlBtn {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: white;
+    background: rgba(167, 80, 255, 0.15) !important;
+    border: 1px solid rgba(167, 80, 255, 0.25) !important;
+    color: white !important;
     backdrop-filter: blur(8px);
-    transition: all 0.3s ease;
+    transition: all 0.25s ease !important;
 }
 
 .controlBtn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
+    background: rgba(167, 80, 255, 0.3) !important;
+    border-color: rgba(167, 80, 255, 0.5) !important;
+    color: white !important;
     transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(167, 80, 255, 0.3) !important;
 }
 
 .controlBtn.active {
-    background: #ff4d4f;
-    color: white;
+    background: linear-gradient(135deg, #ff6b35, #ff3b5c) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(255, 107, 53, 0.5) !important;
 }
 
 .ghostBtn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.5);
-    transition: color 0.3s;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.45) !important;
+    transition: color 0.25s, transform 0.2s !important;
 }
 
 .ghostBtn:hover {
-    color: white;
+    color: rgba(167, 80, 255, 0.9) !important;
+    transform: scale(1.1);
+}
+
+.extraControls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .outgoingCallContainer {
@@ -256,7 +289,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(160deg, #0d0618 0%, #120a22 40%, #1a0e30 100%);
+    backdrop-filter: blur(20px);
     z-index: 1000;
 }
 
@@ -276,9 +310,9 @@
 }
 
 .profileAvatar {
-    background: #1890ff;
-    border: 4px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #a750ff, #7b2fff) !important;
+    border: 4px solid rgba(167, 80, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(167, 80, 255, 0.4) !important;
     z-index: 2;
 }
 
@@ -290,7 +324,7 @@
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 2px solid rgba(167, 80, 255, 0.5);
     animation: ripple 2s infinite;
     z-index: 1;
 }
@@ -300,11 +334,13 @@
         width: 100px;
         height: 100px;
         opacity: 0.8;
+        border-color: rgba(167, 80, 255, 0.6);
     }
     100% {
-        width: 250px;
-        height: 250px;
+        width: 280px;
+        height: 280px;
         opacity: 0;
+        border-color: rgba(255, 107, 53, 0);
     }
 }
 
@@ -312,7 +348,11 @@
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 8px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 16px rgba(167, 80, 255, 0.3);
+    background: linear-gradient(135deg, #ffffff, #d8b4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .previewBackground {
@@ -329,44 +369,46 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(10px) brightness(0.6);
+    filter: blur(12px) brightness(0.4);
     transform: scale(1.1);
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
+        transform: translateY(0);
     }
 }
 
 .dialingAnimation {
     display: flex;
-    gap: 8px;
-    margin: 30px 0;
+    gap: 10px;
+    margin: 32px 0;
 }
 
 .dialingAnimation span {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: white;
+    background: linear-gradient(135deg, #a750ff, #ff6b35);
     animation: pulse 1.4s infinite;
 }
 
 .dialingAnimation span:nth-child(2) {
-    animation-delay: 0.2s;
+    animation-delay: 0.22s;
 }
 
 .dialingAnimation span:nth-child(3) {
-    animation-delay: 0.4s;
+    animation-delay: 0.44s;
 }
 
 @keyframes slideIn {
     from {
-        transform: translateY(-50px);
+        transform: translateY(-40px);
         opacity: 0;
     }
     to {
@@ -379,24 +421,36 @@
     0%,
     100% {
         opacity: 0.3;
-        transform: scale(1);
+        transform: scale(0.9);
     }
     50% {
         opacity: 1;
-        transform: scale(1.2);
+        transform: scale(1.25);
     }
+}
+
+.retryBtn {
+    background: linear-gradient(135deg, #a750ff, #7b2fff) !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 16px rgba(167, 80, 255, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+.retryBtn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 22px rgba(167, 80, 255, 0.6) !important;
 }
 
 @media (max-width: 768px) {
     .localVideoContainer {
         width: 100px;
         height: 80px;
-        bottom: 80px;
+        bottom: 90px;
         right: 10px;
     }
 
     .callControls {
-        padding: 15px;
+        padding: 14px 16px;
         gap: 10px;
     }
 
@@ -411,16 +465,15 @@
     }
 }
 
-/* Group Call Grid */
 .groupCallGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 24px;
-    padding: 40px;
+    padding: 40px 40px 120px;
     width: 100%;
     max-width: 1600px;
     margin: 0 auto;
-    height: calc(100vh - 120px);
+    height: 100%;
     overflow-y: auto;
     background-color: transparent;
     align-content: center;
@@ -432,7 +485,7 @@
 }
 
 .participantItem {
-    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    background: linear-gradient(135deg, #1a0e30 0%, #0d0618 100%);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -442,25 +495,26 @@
     aspect-ratio: 16 / 9;
     max-height: 80vh;
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
-    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7);
+    border: 1.5px solid rgba(167, 80, 255, 0.1);
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .participantItem:hover {
     transform: scale(1.02);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8);
+    border-color: rgba(167, 80, 255, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(167, 80, 255, 0.15);
 }
 
 .participantItem.local {
-    border-color: #1890ff;
-    box-shadow: 0 0 20px rgba(24, 144, 255, 0.3);
+    border-color: rgba(167, 80, 255, 0.5);
+    box-shadow: 0 0 25px rgba(167, 80, 255, 0.25);
 }
 
 .participantItem.waiting {
-    opacity: 0.7;
-    filter: grayscale(0.5);
+    opacity: 0.65;
+    filter: grayscale(0.4);
+    border-color: rgba(255, 107, 53, 0.2);
 }
 
 .participantVideo {
@@ -477,7 +531,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
 }
 
 .participantName {
@@ -485,28 +539,32 @@
     font-size: 20px;
     font-weight: 600;
     margin: 0;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.95);
 }
 
 .participantLabel {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 8px 16px;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(13, 6, 24, 0.8);
+    padding: 6px 14px;
     border-radius: 12px;
     color: white;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(167, 80, 255, 0.15);
+    letter-spacing: 0.2px;
 }
 
 .statusTag {
     font-size: 12px;
-    opacity: 0.8;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2px 8px;
-    border-radius: 4px;
+    opacity: 0.75;
+    background: rgba(255, 107, 53, 0.15);
+    border: 1px solid rgba(255, 107, 53, 0.3);
+    padding: 3px 10px;
+    border-radius: 6px;
     margin-top: 4px;
+    color: #ff9a6c;
+    letter-spacing: 0.5px;
 }

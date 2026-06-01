@@ -2,9 +2,17 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
+import { loadEnv } from 'vite';
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
+    plugins: [react()],
+    define: {
+      'process.env.NODE_ENV': JSON.stringify(mode),
+      'process.env.REACT_APP_SERVER_BASE_URL': JSON.stringify(env.REACT_APP_SERVER_BASE_URL || 'http://localhost:5678'),
+      'process.env.REACT_APP_SOCKET_URL': JSON.stringify(env.REACT_APP_SOCKET_URL || 'http://localhost:5678')
+    },
   resolve: {
     alias: {
       '@features': path.resolve(__dirname, './src/features'),
@@ -18,5 +26,6 @@ export default defineConfig({
       '@helpers': path.resolve(__dirname, './src/helpers'),
       '@contexts': path.resolve(__dirname, './src/contexts'),
     },
-  },
-})
+    },
+  };
+});

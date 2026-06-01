@@ -1,6 +1,7 @@
 import axiosInstance from "@config/axiosInstance";
 
-const API_BASE = "/api/calls";
+const API_BASE = "/calls";
+
 
 const callService = {
     // Initiate a call

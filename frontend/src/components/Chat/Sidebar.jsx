@@ -13,19 +13,24 @@ import {
     VideoCameraOutlined,
     RightOutlined,
     EllipsisOutlined,
+    LogoutOutlined,
+    BarChartOutlined,
 } from "@ant-design/icons";
 import styles from "./Sidebar.module.css";
 import GroupAvatar from "./GroupAvatar";
+import SettingsModal from "@components/Settings/SettingsModal";
 import {
     loadConversations,
     selectConversation,
     searchUsers,
     createConversation,
     createGroupConversation,
+    createOrderSupportGroup,
     clearSearchResults,
     selectMessages,
     deleteConversation,
 } from "@features/chat/chatSlice";
+import { logoutUser } from "@features/auth/authSlice";
 import useWebSocket from "@hooks/useWebSocket";
 import callService from "@services/callService";
 import { getFirstLetterOfEachWord } from "@helpers/stringHelper";
@@ -35,7 +40,6 @@ const Sidebar = () => {
     const navigate = useNavigate();
     const { updateStatus } = useWebSocket();
 
-    // Track auth state to reload conversations when user changes
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
     const conversations = useSelector((state) =>
@@ -45,7 +49,6 @@ const Sidebar = () => {
     const searchResults = useSelector((state) => state.chat.searchResults);
     const isSearching = useSelector((state) => state.chat.isSearching);
 
-    // Debug: Log when conversations change
     useEffect(() => {
         console.log("📋 Sidebar conversations updated:", {
             count: conversations.length,
@@ -59,8 +62,12 @@ const Sidebar = () => {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [addUserSearchQuery, setAddUserSearchQuery] = useState("");
     const [addUserSearchResults, setAddUserSearchResults] = useState([]);
+
+    // Tabs state
+    const [activeTab, setActiveTab] = useState("all"); // 'all', 'unread', 'groups'
     const [isAddUserSearching, setIsAddUserSearching] = useState(false);
     const [isCreatingConversation, setIsCreatingConversation] = useState(false);
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [deleteModalState, setDeleteModalState] = useState({
         showModal: false,
         conversationId: null,
@@ -69,17 +76,16 @@ const Sidebar = () => {
         error: null,
     });
 
-    // Group creation state
     const [isGroupMode, setIsGroupMode] = useState(false);
+    const [isOrderSupportMode, setIsOrderSupportMode] = useState(false);
     const [selectedMembers, setSelectedMembers] = useState([]);
     const [groupName, setGroupName] = useState("");
+    const [orderId, setOrderId] = useState("");
 
-    // Handle delete modal events
     useEffect(() => {
         const handleOpenDeleteModal = (event) => {
             const { conversationId, conversationName } = event.detail;
 
-            // Validate conversation exists in state
             const conversationExists = conversations.some((conv) => conv.conversationId === conversationId);
 
             setDeleteModalState({
@@ -94,7 +100,6 @@ const Sidebar = () => {
         const handleConfirmDelete = async (event) => {
             const { conversationId } = event.detail;
 
-            // Validate conversation still exists before deleting
             const conversationExists = conversations.some((conv) => conv.conversationId === conversationId);
 
             if (!conversationExists) {
@@ -115,7 +120,6 @@ const Sidebar = () => {
                 console.error("❌ Failed to delete conversation:", error);
                 let errorMsg = "Unable to delete conversation";
 
-                // Provide specific error messages
                 if (error?.response?.status === 404) {
                     errorMsg = "Conversation does not exist or has been deleted";
                 } else if (error?.message) {
@@ -159,13 +163,11 @@ const Sidebar = () => {
             .finally(() => setIsLoadingConversations(false));
     }, [dispatch, isAuthenticated]);
 
-    // Update status on mount
     useEffect(() => {
         updateStatus("online");
         return () => updateStatus("offline");
     }, [updateStatus]);
 
-    // Handle search
     const handleSearch = (query) => {
         setSearchQuery(query);
         if (query.trim()) {
@@ -175,10 +177,9 @@ const Sidebar = () => {
         }
     };
 
-    // Select conversation
     const handleSelectConversation = (conversationId) => {
         dispatch(selectConversation(conversationId));
-        navigate(`/admin/chat/${conversationId}`);
+        navigate(`/${conversationId}`);
     };
 
     const handleSelectUser = async (userId) => {
@@ -189,19 +190,15 @@ const Sidebar = () => {
         try {
             setIsCreatingConversation(true);
 
-            // Enhanced check: Look for existing 1-to-1 conversation with this user
             const existingConversation = conversations.find((conv) => {
-                // Skip group conversations
                 if (conv.conversationType === "group") {
                     return false;
                 }
 
-                // Check direct participantId field
                 if (conv.participantId === userId || conv.participant_id === userId) {
                     return true;
                 }
 
-                // Check participants array
                 if (Array.isArray(conv.participants) && conv.participants.length > 0) {
                     return conv.participants.some(
                         (p) => p.userId === userId || p.user_id === userId || p.id === userId,
@@ -212,15 +209,12 @@ const Sidebar = () => {
             });
 
             if (existingConversation) {
-                // Conversation already exists, just select it
                 console.log("✅ Conversation already exists:", existingConversation.conversationId);
                 handleSelectConversation(existingConversation.conversationId);
             } else {
-                // Create new conversation if it doesn't exist
                 const result = await dispatch(createConversation({ participantId: userId })).unwrap();
                 console.log("Create conversation result:", result);
 
-                // Ensure participantId is set for future duplicate checks
                 if (result && !result.participantId && !result.participant_id) {
                     result.participantId = userId;
                 }
@@ -273,66 +267,111 @@ const Sidebar = () => {
     };
 
     const handleCreateGroup = async () => {
-        if (!groupName.trim()) {
-            message.error("Please enter a group name");
-            return;
-        }
-        if (selectedMembers.length === 0) {
-            message.error("Please select at least one member");
-            return;
-        }
+        if (isOrderSupportMode) {
+            if (!orderId.trim()) {
+                message.error("Vui lòng nhập mã đơn hàng (Order ID)");
+                return;
+            }
+            if (selectedMembers.length === 0) {
+                message.error("Vui lòng chọn ít nhất 1 thành viên (Người mua/Người bán/Tài xế)");
+                return;
+            }
+            try {
+                setIsCreatingConversation(true);
+                const participantIds = selectedMembers.map((m) => m.user_id || m.userId);
+                const result = await dispatch(
+                    createOrderSupportGroup({
+                        orderId,
+                        participantIds,
+                    }),
+                ).unwrap();
 
-        try {
-            setIsCreatingConversation(true);
-            const participantIds = selectedMembers.map((m) => m.user_id || m.userId);
-            const result = await dispatch(
-                createGroupConversation({
-                    name: groupName,
-                    participantIds,
-                }),
-            ).unwrap();
+                handleSelectConversation(result.conversationId);
+                setShowAddUserModal(false);
+                resetGroupState();
+            } catch (error) {
+                message.error(error || "Failed to create order support group");
+            } finally {
+                setIsCreatingConversation(false);
+            }
+        } else {
+            if (!groupName.trim()) {
+                message.error("Please enter a group name");
+                return;
+            }
+            if (selectedMembers.length === 0) {
+                message.error("Please select at least one member");
+                return;
+            }
 
-            handleSelectConversation(result.conversationId);
-            setShowAddUserModal(false);
-            resetGroupState();
-        } catch (error) {
-            message.error(error || "Failed to create group");
-        } finally {
-            setIsCreatingConversation(false);
+            try {
+                setIsCreatingConversation(true);
+                const participantIds = selectedMembers.map((m) => m.user_id || m.userId);
+                const result = await dispatch(
+                    createGroupConversation({
+                        name: groupName,
+                        participantIds,
+                    }),
+                ).unwrap();
+
+                handleSelectConversation(result.conversationId);
+                setShowAddUserModal(false);
+                resetGroupState();
+            } catch (error) {
+                message.error(error || "Failed to create group");
+            } finally {
+                setIsCreatingConversation(false);
+            }
         }
     };
 
     const resetGroupState = () => {
         setIsGroupMode(false);
+        setIsOrderSupportMode(false);
         setSelectedMembers([]);
         setGroupName("");
+        setOrderId("");
         setAddUserSearchQuery("");
         setAddUserSearchResults([]);
     };
 
-    const displayList = searchQuery ? searchResults : conversations;
+    // Filter conversations based on active tab
+    const getFilteredConversations = () => {
+        if (activeTab === "unread") {
+            return conversations.filter(conv => conv.unreadCount > 0);
+        }
+        if (activeTab === "groups") {
+            return conversations.filter(conv => conv.type === "group" || conv.conversationType === "group");
+        }
+        return conversations;
+    };
+
+    const filteredConversations = getFilteredConversations();
+    const displayList = searchQuery ? searchResults : filteredConversations;
     const isLoading = isSearching || (isLoadingConversations && !conversations.length);
 
     return (
         <div className={styles.sidebar}>
             {/* Header */}
             <div className={styles.header}>
-                <h2>Messages</h2>
-                <div className={styles.headerActions}>
-                    <button className={styles.headerBtn} title="New chat" onClick={() => setShowAddUserModal(true)}>
-                        <PlusOutlined />
-                    </button>
-                    <button className={styles.headerBtn} title="Settings">
-                        <SettingOutlined />
-                    </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h2>Messages</h2>
+                    <span className={styles.badge}>{conversations.length}</span>
                 </div>
+                <button 
+                    className={styles.addBtn} 
+                    title="Tạo tin nhắn mới" 
+                    onClick={() => setShowAddUserModal(true)}
+                >
+                    <PlusOutlined />
+                </button>
             </div>
 
             {/* Search Bar */}
             <div className={styles.searchContainer}>
                 <input
                     type="text"
-                    placeholder="Search conversations..."
+                    placeholder="Tìm kiếm cuộc trò chuyện..."
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
                     onFocus={() => setShowSearch(true)}
@@ -341,16 +380,38 @@ const Sidebar = () => {
                 <SearchOutlined className={styles.searchIcon} />
             </div>
 
+            {/* Tabs */}
+            <div className={styles.tabsContainer}>
+                <div 
+                    className={`${styles.tab} ${activeTab === "all" ? styles.activeTab : ""}`}
+                    onClick={() => setActiveTab("all")}
+                >
+                    Tất cả
+                </div>
+                <div 
+                    className={`${styles.tab} ${activeTab === "unread" ? styles.activeTab : ""}`}
+                    onClick={() => setActiveTab("unread")}
+                >
+                    Chưa đọc
+                </div>
+                <div 
+                    className={`${styles.tab} ${activeTab === "groups" ? styles.activeTab : ""}`}
+                    onClick={() => setActiveTab("groups")}
+                >
+                    Nhóm
+                </div>
+            </div>
+
             {/* Conversations/Results List */}
             <div className={styles.listContainer}>
                 {isLoading ? (
                     <div className={styles.placeholder}>
                         <span className={styles.spinner}></span>
-                        <p>Loading...</p>
+                        <p>Đang tải...</p>
                     </div>
                 ) : displayList.length === 0 ? (
                     <div className={styles.placeholder}>
-                        <p>{searchQuery ? "No results" : "No conversations yet"}</p>
+                        <p>{searchQuery ? "Không tìm thấy kết quả" : "Chưa có cuộc trò chuyện nào"}</p>
                     </div>
                 ) : (
                     <div className={styles.list}>
@@ -371,7 +432,7 @@ const Sidebar = () => {
                                           size={40}
                                           src={user.avatar_path || user.avatarPath || null}
                                           style={{
-                                              backgroundColor: "#1890ff",
+                                              backgroundColor: "var(--primary-color)",
                                               display: "flex",
                                               alignItems: "center",
                                               justifyContent: "center",
@@ -415,7 +476,7 @@ const Sidebar = () => {
                     <div className={styles.deleteModal} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.deleteModalHeader}>
                             <h3>
-                                <DeleteOutlined /> Delete Conversation
+                                <DeleteOutlined /> Xóa cuộc trò chuyện
                             </h3>
                         </div>
                         <div className={styles.deleteModalBody}>
@@ -424,10 +485,10 @@ const Sidebar = () => {
                             ) : (
                                 <>
                                     <p>
-                                        Are you sure you want to delete the conversation with{" "}
+                                        Bạn có chắc chắn muốn xóa cuộc trò chuyện với{" "}
                                         <strong>{deleteModalState.conversationName}</strong>?
                                     </p>
-                                    <p className={styles.deleteWarning}>This action cannot be undone.</p>
+                                    <p className={styles.deleteWarning}>Hành động này không thể hoàn tác.</p>
                                 </>
                             )}
                         </div>
@@ -440,7 +501,7 @@ const Sidebar = () => {
                                 }
                                 disabled={deleteModalState.isDeleting}
                             >
-                                {deleteModalState.error ? "Close" : "Cancel"}
+                                {deleteModalState.error ? "Đóng" : "Hủy"}
                             </button>
                             {!deleteModalState.error && (
                                 <button
@@ -454,7 +515,7 @@ const Sidebar = () => {
                                     }}
                                     disabled={deleteModalState.isDeleting}
                                 >
-                                    {deleteModalState.isDeleting ? "⏳ Deleting..." : "Delete"}
+                                    {deleteModalState.isDeleting ? "⏳ Đang xóa..." : "Xóa"}
                                 </button>
                             )}
                         </div>
@@ -468,24 +529,44 @@ const Sidebar = () => {
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                         {/* Modal Header */}
                         <div className={styles.modalHeader}>
-                            <h3>{isGroupMode ? "Create New Group" : "Start New Chat"}</h3>
+                            <h3>{isGroupMode ? (isOrderSupportMode ? "Tạo Nhóm Hỗ Trợ Đơn Hàng" : "Create New Group") : "Start New Chat"}</h3>
                             <div style={{ display: "flex", gap: "8px" }}>
                                 <button
-                                    className={`${styles.headerBtn} ${isGroupMode ? styles.active : ""}`}
+                                    className={`${styles.headerBtn} ${isGroupMode && !isOrderSupportMode ? styles.active : ""}`}
                                     onClick={() => {
-                                        if (isGroupMode) {
+                                        if (isGroupMode && !isOrderSupportMode) {
                                             resetGroupState();
                                         } else {
+                                            resetGroupState();
                                             setIsGroupMode(true);
                                         }
                                     }}
-                                    title={isGroupMode ? "Cancel Group" : "Create Group"}
+                                    title={isGroupMode && !isOrderSupportMode ? "Cancel Group" : "Create Group"}
                                     style={{
-                                        color: isGroupMode ? "#1890ff" : "inherit",
-                                        background: isGroupMode ? "#e6f7ff" : "transparent",
+                                        color: isGroupMode && !isOrderSupportMode ? "var(--primary-color)" : "inherit",
+                                        background: isGroupMode && !isOrderSupportMode ? "#FFF0E6" : "transparent",
                                     }}
                                 >
                                     <PlusOutlined />
+                                </button>
+                                <button
+                                    className={`${styles.headerBtn} ${isOrderSupportMode ? styles.active : ""}`}
+                                    onClick={() => {
+                                        if (isOrderSupportMode) {
+                                            resetGroupState();
+                                        } else {
+                                            resetGroupState();
+                                            setIsGroupMode(true);
+                                            setIsOrderSupportMode(true);
+                                        }
+                                    }}
+                                    title={isOrderSupportMode ? "Hủy Tạo Ticket" : "Tạo Hỗ Trợ Đơn Hàng"}
+                                    style={{
+                                        color: isOrderSupportMode ? "var(--primary-color)" : "inherit",
+                                        background: isOrderSupportMode ? "#FFF0E6" : "transparent",
+                                    }}
+                                >
+                                    <span style={{ fontSize: "14px", fontWeight: "bold" }}>Tạo Ticket</span>
                                 </button>
                                 <button
                                     className={styles.closeBtn}
@@ -503,20 +584,32 @@ const Sidebar = () => {
                         {/* Group Name Input */}
                         {isGroupMode && (
                             <div style={{ padding: "0 20px 15px" }}>
-                                <div style={{ display: "flex", gap: "8px" }}>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter group name..."
-                                        value={groupName}
-                                        onChange={(e) => setGroupName(e.target.value)}
-                                        className={styles.modalSearchInput}
-                                        style={{ borderBottom: "2px solid #1890ff", flex: 1 }}
-                                    />
+                                <div style={{ display: "flex", gap: "8px", flexDirection: isOrderSupportMode ? "column" : "row" }}>
+                                    {isOrderSupportMode ? (
+                                        <input
+                                            type="text"
+                                            placeholder="Nhập mã đơn hàng (Ví dụ: ORD-12345)"
+                                            value={orderId}
+                                            onChange={(e) => setOrderId(e.target.value)}
+                                            className={styles.modalSearchInput}
+                                            style={{ borderBottom: "2px solid var(--primary-color)", flex: 1, marginBottom: "8px" }}
+                                        />
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            placeholder="Enter group name..."
+                                            value={groupName}
+                                            onChange={(e) => setGroupName(e.target.value)}
+                                            className={styles.modalSearchInput}
+                                            style={{ borderBottom: "2px solid var(--primary-color)", flex: 1 }}
+                                        />
+                                    )}
                                     <Button
                                         type="primary"
                                         onClick={handleCreateGroup}
                                         loading={isCreatingConversation}
-                                        disabled={!groupName.trim() || selectedMembers.length === 0}
+                                        disabled={(isOrderSupportMode ? !orderId.trim() : !groupName.trim()) || selectedMembers.length === 0}
+                                        style={{ backgroundColor: "var(--primary-color)" }}
                                     >
                                         Create ({selectedMembers.length})
                                     </Button>
@@ -592,7 +685,7 @@ const Sidebar = () => {
                                             size={40}
                                             src={user.avatar_path || user.avatarPath || null}
                                             style={{
-                                                backgroundColor: "#1890ff",
+                                                backgroundColor: "var(--primary-color)",
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
@@ -626,6 +719,12 @@ const Sidebar = () => {
                     </div>
                 </div>
             )}
+
+            {/* Settings Modal */}
+            <SettingsModal 
+                visible={showSettingsModal} 
+                onClose={() => setShowSettingsModal(false)} 
+            />
         </div>
     );
 };
@@ -794,26 +893,32 @@ const ConversationItem = ({ conv, isSelected, onSelect }) => {
 
     return (
         <div className={`${styles.conversationItem} ${isSelected ? styles.selected : ""}`} onClick={onSelect}>
-            {conv.type === "group" || conv.conversationType === "group" ? (
-                <GroupAvatar members={conv.memberAvatars || conv.participants} size={40} />
-            ) : (
-                <Avatar
-                    size={40}
-                    src={conv.avatar_path || conv.avatarPath || null}
-                    style={{
-                        backgroundColor: "#1890ff",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: "bold",
-                        fontSize: "14px",
-                    }}
-                >
-                    {!conv.avatar_path && !conv.avatarPath && conv.name
-                        ? getFirstLetterOfEachWord(conv.name).children
-                        : "U"}
-                </Avatar>
-            )}
+            <div style={{ position: "relative" }}>
+                {conv.type === "group" || conv.conversationType === "group" ? (
+                    <GroupAvatar members={conv.memberAvatars || conv.participants} size={48} />
+                ) : (
+                    <Avatar
+                        size={48}
+                        src={conv.avatar_path || conv.avatarPath || null}
+                        style={{
+                            backgroundColor: "var(--primary-color)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: "bold",
+                            fontSize: "16px",
+                        }}
+                    >
+                        {!conv.avatar_path && !conv.avatarPath && conv.name
+                            ? getFirstLetterOfEachWord(conv.name).children
+                            : "U"}
+                    </Avatar>
+                )}
+                {/* Online indicator dot for direct messages */}
+                {conv.type !== "group" && conv.conversationType !== "group" && (
+                    <div className={styles.onlineDot} />
+                )}
+            </div>
             <div className={styles.convInfo}>
                 <div className={styles.convName}>
                     {conv.name}
@@ -833,9 +938,14 @@ const ConversationItem = ({ conv, isSelected, onSelect }) => {
                 {lastMessageTime && (
                     <div className={styles.convTime}>{formatRelativeTime(new Date(lastMessageTime).getTime())}</div>
                 )}
-                <button className={styles.menuBtn} onClick={handleMenuClick} title="More options">
-                    <EllipsisOutlined />
-                </button>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginTop: "4px", gap: "8px" }}>
+                    {conv.unreadCount > 0 && (
+                        <div className={styles.unreadBadge}>{conv.unreadCount}</div>
+                    )}
+                    <button className={styles.menuBtn} onClick={handleMenuClick} title="More options">
+                        <EllipsisOutlined />
+                    </button>
+                </div>
             </div>
 
             {/* Dropdown Menu */}

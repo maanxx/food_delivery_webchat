@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Avatar } from "antd";
-import { EllipsisOutlined, PlayCircleOutlined, PauseCircleOutlined, CloseOutlined, ForwardOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, PlayCircleOutlined, PauseCircleOutlined, CloseOutlined, ForwardOutlined, CheckOutlined } from "@ant-design/icons";
 import styles from "./ChatWindow.module.css";
 import { formatTime, formatFileSize } from "@utils/formatters";
 import { getFirstLetterOfEachWord } from "@helpers/stringHelper";
@@ -129,20 +129,22 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
         if (message.isRead === true || message.status === "seen") {
             return (
                 <span className={styles.seen} title="Seen">
-                    {/* ✓✓ */}
+                    <CheckOutlined style={{ fontSize: '10px', marginLeft: '-2px' }} />
+                    <CheckOutlined style={{ fontSize: '10px', marginLeft: '-4px' }} />
                 </span>
             );
         }
         if (message.status === "delivered") {
             return (
                 <span className={styles.delivered} title="Delivered">
-                    {/* ✓ */}
+                    <CheckOutlined style={{ fontSize: '10px', marginLeft: '-2px' }} />
+                    <CheckOutlined style={{ fontSize: '10px', marginLeft: '-4px' }} />
                 </span>
             );
         }
         return (
             <span className={styles.sent} title="Sent">
-                {/* ✓ */}
+                <CheckOutlined style={{ fontSize: '10px' }} />
             </span>
         );
     };
@@ -229,8 +231,8 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                     }}
                                     style={{
                                         padding: "6px 10px",
-                                        background: isOwn ? "#ffffff" : "#1890ff",
-                                        color: isOwn ? "#1890ff" : "#ffffff",
+                                        background: isOwn ? "#ffffff" : "var(--primary-color)",
+                                        color: isOwn ? "var(--primary-color)" : "#ffffff",
                                         border: "none",
                                         borderRadius: "50%",
                                         cursor: "pointer",
@@ -276,7 +278,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                             width: "100%",
                                             height: "4px",
                                             borderRadius: "2px",
-                                            background: `linear-gradient(to right, ${isOwn ? "#ffffff" : "#1890ff"} 0%, ${isOwn ? "#ffffff" : "#1890ff"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} 100%)`,
+                                            background: `linear-gradient(to right, ${isOwn ? "#ffffff" : "var(--primary-color)"} 0%, ${isOwn ? "#ffffff" : "var(--primary-color)"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} 100%)`,
                                             cursor: "pointer",
                                             WebkitAppearance: "none",
                                             appearance: "none",
@@ -299,7 +301,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                             width: 12px;
                                             height: 12px;
                                             border-radius: 50%;
-                                            background: ${isOwn ? "#ffffff" : "#1890ff"};
+                                            background: ${isOwn ? "#ffffff" : "var(--primary-color)"};
                                             cursor: pointer;
                                             box-shadow: 0 0 2px rgba(0,0,0,0.3);
                                         }
@@ -307,7 +309,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                             width: 12px;
                                             height: 12px;
                                             border-radius: 50%;
-                                            background: ${isOwn ? "#ffffff" : "#1890ff"};
+                                            background: ${isOwn ? "#ffffff" : "var(--primary-color)"};
                                             cursor: pointer;
                                             border: none;
                                             box-shadow: 0 0 2px rgba(0,0,0,0.3);
@@ -444,8 +446,8 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                         }}
                                         style={{
                                             padding: "6px 10px",
-                                            background: isOwn ? "#ffffff" : "#1890ff",
-                                            color: isOwn ? "#1890ff" : "#ffffff",
+                                            background: isOwn ? "#ffffff" : "var(--primary-color)",
+                                            color: isOwn ? "var(--primary-color)" : "#ffffff",
                                             border: "none",
                                             borderRadius: "50%",
                                             cursor: "pointer",
@@ -491,7 +493,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                                 width: "100%",
                                                 height: "4px",
                                                 borderRadius: "2px",
-                                                background: `linear-gradient(to right, ${isOwn ? "#ffffff" : "#1890ff"} 0%, ${isOwn ? "#ffffff" : "#1890ff"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} 100%)`,
+                                                background: `linear-gradient(to right, ${isOwn ? "#ffffff" : "var(--primary-color)"} 0%, ${isOwn ? "#ffffff" : "var(--primary-color)"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} ${duration ? (currentTime / duration) * 100 : 0}%, ${isOwn ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"} 100%)`,
                                                 cursor: "pointer",
                                                 WebkitAppearance: "none",
                                                 appearance: "none",
@@ -514,7 +516,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                                 width: 12px;
                                                 height: 12px;
                                                 border-radius: 50%;
-                                                background: ${isOwn ? "#ffffff" : "#1890ff"};
+                                                background: ${isOwn ? "#ffffff" : "var(--primary-color)"};
                                                 cursor: pointer;
                                                 box-shadow: 0 0 2px rgba(0,0,0,0.3);
                                             }
@@ -522,7 +524,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                                                 width: 12px;
                                                 height: 12px;
                                                 border-radius: 50%;
-                                                background: ${isOwn ? "#ffffff" : "#1890ff"};
+                                                background: ${isOwn ? "#ffffff" : "var(--primary-color)"};
                                                 cursor: pointer;
                                                 border: none;
                                                 box-shadow: 0 0 2px rgba(0,0,0,0.3);
@@ -739,7 +741,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                     size={32}
                     src={message?.senderAvatar || null}
                     style={{
-                        backgroundColor: "#1890ff",
+                        backgroundColor: "var(--primary-color)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -846,7 +848,7 @@ const MessageBubble = ({ message, isOwn, showAvatar, showTimestamp, onDelete, on
                             textAlign: "left",
                             cursor: "pointer",
                             fontSize: "14px",
-                            color: "#1890ff",
+                            color: "var(--primary-color)",
                             borderBottom: "1px solid #f0f0f0",
                         }}
                         onMouseEnter={(e) => (e.target.style.backgroundColor = "#e6f7ff")}

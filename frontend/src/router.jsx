@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '@pages/Login/Login';
 import ChatPage from '@pages/Chat/ChatPage';
+import Dashboard from '@pages/Dashboard/Dashboard';
 import { useSelector } from 'react-redux';
 
 // Private Route Component
@@ -19,6 +20,22 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <ChatPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: '/:conversationId',
+    element: (
+      <PrivateRoute>
+        <ChatPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: '/dashboard',
+    element: (
+      <PrivateRoute>
+        <Dashboard />
       </PrivateRoute>
     ),
   },

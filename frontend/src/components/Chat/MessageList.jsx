@@ -188,7 +188,7 @@ const MessageList = ({ messages, conversationId, currentUserId, onForward }) => 
                                         background: "#e3f2fd",
                                         borderRadius: "12px",
                                         fontSize: "12px",
-                                        color: "#1890ff",
+                                        color: "var(--primary-color)",
                                         fontWeight: "600",
                                         whiteSpace: "nowrap",
                                     }}

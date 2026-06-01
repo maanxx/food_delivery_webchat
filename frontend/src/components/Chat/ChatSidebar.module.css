@@ -138,8 +138,8 @@
     width: 100%;
     padding: 8px;
     background: #e6f7ff;
-    border: 1px dashed #1890ff;
-    color: #1890ff;
+    border: 1px dashed var(--primary-color);
+    color: var(--primary-color);
     border-radius: 6px;
     cursor: pointer;
     display: flex;
@@ -224,9 +224,9 @@
 }
 
 .navOption:hover {
-    background: #1890ff;
+    background: var(--primary-color);
     color: #fff;
-    border-color: #1890ff;
+    border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
 }
@@ -270,7 +270,7 @@
 
 .menuItemHeader:hover {
     background: #f5f5f5;
-    color: #1890ff;
+    color: var(--primary-color);
 }
 
 .menuItemLabel {
@@ -372,8 +372,8 @@
 }
 
 .customizeBtn:hover {
-    background: #1890ff;
-    border-color: #1890ff;
+    background: var(--primary-color);
+    border-color: var(--primary-color);
     color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);

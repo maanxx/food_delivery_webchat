@@ -196,6 +196,33 @@ export const createGroupConversation = createAsyncThunk(
     },
 );
 
+export const createOrderSupportGroup = createAsyncThunk(
+    "chat/createOrderSupportGroup",
+    async ({ orderId, participantIds }, { rejectWithValue }) => {
+        try {
+            const response = await chatAPI.createOrderSupportGroup({
+                orderId,
+                participantIds,
+            });
+            return response.data?.data || response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to create order support group");
+        }
+    },
+);
+
+export const updateTicketStatus = createAsyncThunk(
+    "chat/updateTicketStatus",
+    async ({ conversationId, ticketStatus }, { rejectWithValue }) => {
+        try {
+            const response = await chatAPI.updateTicketStatus(conversationId, ticketStatus);
+            return { conversationId, ticketStatus: response.data?.data?.ticketStatus || ticketStatus };
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to update ticket status");
+        }
+    },
+);
+
 export const updateConversation = createAsyncThunk(
     "chat/updateConversation",
     async ({ conversationId, name, avatar }, { rejectWithValue }) => {
@@ -755,6 +782,31 @@ const chatSlice = createSlice({
             .addCase(createGroupConversation.rejected, (state, action) => {
                 state.error = action.payload;
             });
+            
+        // ========== CREATE ORDER SUPPORT GROUP ==========
+        builder
+            .addCase(createOrderSupportGroup.fulfilled, (state, action) => {
+                const conversation = action.payload;
+                if (conversation.lastMessageTimestamp && typeof conversation.lastMessageTimestamp === "string") {
+                    conversation.lastMessageTimestamp = new Date(conversation.lastMessageTimestamp).getTime();
+                }
+                state.conversations.byId[conversation.conversationId] = conversation;
+                if (!state.conversations.allIds.includes(conversation.conversationId)) {
+                    state.conversations.allIds.unshift(conversation.conversationId);
+                }
+                state.conversations.selectedId = conversation.conversationId;
+            })
+            .addCase(createOrderSupportGroup.rejected, (state, action) => {
+                state.error = action.payload;
+            });
+            
+        // ========== UPDATE TICKET STATUS ==========
+        builder.addCase(updateTicketStatus.fulfilled, (state, action) => {
+            const { conversationId, ticketStatus } = action.payload;
+            if (state.conversations.byId[conversationId]) {
+                state.conversations.byId[conversationId].ticketStatus = ticketStatus;
+            }
+        });
 
         // ========== UPDATE CONVERSATION ==========
         builder.addCase(updateConversation.fulfilled, (state, action) => {

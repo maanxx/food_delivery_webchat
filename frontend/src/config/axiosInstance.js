@@ -26,8 +26,6 @@ axiosInstance.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
-    console.log("REQUEST HEADERS:", config.headers);
-
     return config;
 }, (error) => {
     return Promise.reject(error);

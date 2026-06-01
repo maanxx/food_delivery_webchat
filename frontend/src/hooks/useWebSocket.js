@@ -23,11 +23,16 @@ const useWebSocket = () => {
     // Get conversations data to look up user names
     const conversations = useSelector((state) => state.chat.conversations.byId);
     const currentUser = useSelector((state) => state.auth.user);
+    const currentUserRef = useRef(currentUser);
 
-    // Update ref whenever conversations change (without triggering re-mount)
+    // Update refs without triggering re-mount
     useEffect(() => {
         conversationsRef.current = conversations;
     }, [conversations]);
+
+    useEffect(() => {
+        currentUserRef.current = currentUser;
+    }, [currentUser]);
 
     // Get token from localStorage
     const authToken = localStorage.getItem("access_token");
@@ -86,6 +91,14 @@ const useWebSocket = () => {
         socket.on("new_message", (message) => {
             console.log("📨 New message from socket:", { message, senderId: message?.senderId });
             dispatch(addMessage({ conversationId: message.conversationId, message }));
+
+            // Phát âm thanh thông báo nếu tin nhắn đến từ người khác
+            const currentUserId = currentUserRef.current?.sub || currentUserRef.current?.user_id || currentUserRef.current?.userId || currentUserRef.current?.id;
+            if (message.senderId && currentUserId && message.senderId !== currentUserId) {
+                const audio = new Audio("https://actions.google.com/sounds/v1/water/water_drop.ogg");
+                audio.volume = 0.5;
+                audio.play().catch((err) => console.log("Audio play blocked by browser:", err));
+            }
 
             // Update conversation with latest message info - build lastMessage object
             const lastMessage = {

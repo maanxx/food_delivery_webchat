@@ -72,7 +72,7 @@ const GroupCallWindow = ({
                                         size={80}
                                         src={participant.avatarPath || null}
                                         style={{
-                                            backgroundColor: "#1890ff",
+                                            backgroundColor: "var(--primary-color)",
                                         }}
                                     >
                                         {participant.username ? participant.username.charAt(0).toUpperCase() : "U"}

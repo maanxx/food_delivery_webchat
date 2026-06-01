@@ -53,7 +53,7 @@
     font-family: "Courier New", monospace;
     font-size: 14px;
     font-weight: 600;
-    color: #1890ff;
+    color: var(--primary-color);
 }
 
 .recordingActions {
@@ -97,7 +97,7 @@
 }
 
 .recordBtn {
-    background-color: #1890ff;
+    background-color: var(--primary-color);
     color: white;
     width: 100%;
 }

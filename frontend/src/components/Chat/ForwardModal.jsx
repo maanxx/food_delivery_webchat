@@ -94,7 +94,7 @@ const ForwardModal = ({ visible, onClose, messageToForward }) => {
                                 avatar={
                                     <Avatar
                                         src={conv.avatar_path || conv.avatarPath}
-                                        style={{ backgroundColor: "#1890ff" }}
+                                        style={{ backgroundColor: "var(--primary-color)" }}
                                     >
                                         {!conv.avatar_path && !conv.avatarPath && conv.name
                                             ? getFirstLetterOfEachWord(conv.name).children

@@ -178,7 +178,7 @@ const GroupSettingsModal = ({ visible, onClose, conversation }) => {
                 <Avatar
                     size={80}
                     src={conversation.avatar_path || conversation.avatarPath}
-                    style={{ backgroundColor: "#1890ff", marginBottom: "12px" }}
+                    style={{ backgroundColor: "var(--primary-color)", marginBottom: "12px" }}
                 >
                     {getFirstLetterOfEachWord(conversation.name || "Group").children}
                 </Avatar>

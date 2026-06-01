@@ -8,7 +8,7 @@ const GroupAvatar = ({ members = [], size = 40 }) => {
             <Avatar
                 size={size}
                 style={{
-                    backgroundColor: "#1890ff",
+                    backgroundColor: "var(--primary-color)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -106,7 +106,7 @@ const GroupAvatar = ({ members = [], size = 40 }) => {
                     src={member.avatarPath}
                     style={{
                         ...getAvatarStyles(index),
-                        backgroundColor: "#1890ff",
+                        backgroundColor: "var(--primary-color)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

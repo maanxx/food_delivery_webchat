@@ -25,7 +25,6 @@ const formatDuration = (seconds) => {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
-// Audio visualization component for voice calls
 const AudioVisualization = ({ stream }) => {
     const canvasRef = useRef(null);
     const analyserRef = useRef(null);
@@ -74,9 +73,7 @@ const AudioVisualization = ({ stream }) => {
                     cancelAnimationFrame(animationRef.current);
                 }
             };
-        } catch (error) {
-            console.error("Failed to set up audio visualization:", error);
-        }
+        } catch (error) {}
     }, [stream]);
 
     return <canvas ref={canvasRef} className={styles.audioVisualization} width={300} height={100} />;
@@ -103,89 +100,52 @@ const CallWindow = ({
     const userInfo = getUserInfo();
     const userId = userIdProp || userInfo?.userId || userInfo?.id || userInfo?.sub;
 
-    // Phát hiện mức âm thanh từ local stream
     const localAudioLevel = useAudioLevel(callState?.localStream, 50);
 
-    // console.log("🎬 [CallWindow] RENDER - callState:", {
-    //     inCall: callState?.inCall,
-    //     callType: callState?.callType,
-    //     hasRemoteStream: !!callState?.remoteStream,
-    //     remoteStreamId: callState?.remoteStream?.id,
-    //     remoteStreamTracks: callState?.remoteStream?.getTracks?.()?.length || 0,
-    // });
-
-    // Helper function to get display name (not ID)
     const getDisplayName = (name) => {
         if (!name) return "User";
-        // Only return "Unknown User" if the name is strictly numeric and long
-        // Group names or usernames might contain numbers, so we should be careful
         if (/^\d{10,}$/.test(name)) {
             return "Unknown User";
         }
         return name;
     };
 
-    // Display local stream
     useEffect(() => {
         if (localVideoRef.current) {
             localVideoRef.current.srcObject = callState.localStream || null;
         }
     }, [callState.localStream]);
 
-    // Display remote stream
     useEffect(() => {
         if (remoteVideoRef.current) {
             remoteVideoRef.current.srcObject = callState.remoteStream || null;
         }
     }, [callState.remoteStream]);
 
-    // Handle remote audio for both voice and video calls
     useEffect(() => {
         if (!remoteAudioRef.current || !callState.remoteStream) {
             return;
         }
 
-        console.log("🎧 [CallWindow] Setting up remote audio");
-        console.log("   Stream:", callState.remoteStream);
-        console.log("   Stream ID:", callState.remoteStream?.id);
-
-        // Check audio tracks
         const audioTracks = callState.remoteStream?.getAudioTracks?.() || [];
-        console.log("   Audio tracks count:", audioTracks.length);
-        audioTracks.forEach((track, idx) => {
-            console.log(`   Track ${idx}:`, {
-                enabled: track.enabled,
-                readyState: track.readyState,
-                kind: track.kind,
-            });
-        });
 
-        // Make sure audio tracks are enabled
         if (audioTracks.length === 0) {
-            console.warn("⚠️ [CallWindow] NO AUDIO TRACKS in remote stream! Cannot play audio.");
             setAudioError("No audio tracks received. Check remote user's microphone.");
             return;
         }
 
-        // Enable all audio tracks
         audioTracks.forEach((track) => {
             if (!track.enabled) {
-                console.log("🔊 [CallWindow] Enabling audio track");
                 track.enabled = true;
             }
         });
 
-        // Set the stream and configure audio element
         remoteAudioRef.current.srcObject = callState.remoteStream;
-        remoteAudioRef.current.volume = 1.0; // Set volume to max
-        remoteAudioRef.current.muted = false; // Ensure not muted
-        console.log("   Audio element configured");
+        remoteAudioRef.current.volume = 1.0;
+        remoteAudioRef.current.muted = false;
 
-        // Add a small delay to ensure the audio element is ready
         const playAudio = async () => {
             try {
-                console.log("   Attempting to play audio...");
-                // Remove autoPlay attribute and play manually for better control
                 if (remoteAudioRef.current) {
                     remoteAudioRef.current.autoplay = true;
 
@@ -196,11 +156,7 @@ const CallWindow = ({
                     }
                 }
             } catch (err) {
-                console.error("   Error message:", err.message);
-
-                // Handle specific autoplay policy errors
                 if (err.name === "NotAllowedError") {
-                    console.warn("   ⚠️ Browser autoplay policy prevented audio playback");
                     setAudioError("Click anywhere on the page to enable audio playback");
                 } else {
                     setAudioError(`Audio playback failed: ${err.message}`);
@@ -208,95 +164,84 @@ const CallWindow = ({
             }
         };
 
-        // Use setTimeout to ensure the audio element is in the DOM and ready
         const timeoutId = setTimeout(playAudio, 100);
         return () => clearTimeout(timeoutId);
     }, [callState.remoteStream, callState.callType]);
 
-    // Check for audio issues
     useEffect(() => {
         if (callState.error?.includes("audio") || callState.error?.includes("media")) {
             setAudioError(callState.error);
         }
     }, [callState.error]);
 
-    // Retry audio playback - for handling autoplay policy
     const retryAudioPlayback = useCallback(async () => {
         if (!remoteAudioRef.current) return;
 
         try {
-            console.log("🔊 [retryAudioPlayback] Attempting to resume audio playback");
             setIsAudioBlocked(false);
             await remoteAudioRef.current.play();
-            console.log("✅ [retryAudioPlayback] Audio playback resumed successfully");
             setAudioError(null);
         } catch (err) {
-            console.error("❌ [retryAudioPlayback] Failed to resume audio:", err);
             setAudioError(`Failed to resume audio: ${err.message}`);
         }
     }, []);
 
-    // Incoming call mode
     if (isIncomingMode && callState.incomingCall && !callState.inCall) {
+        const incoming = callState.incomingCall;
+        const avatarSrc = incoming.isGroupCall ? incoming.groupAvatar : incoming.fromUserAvatar;
+        const displayName = incoming.isGroupCall
+            ? getDisplayName(incoming.groupName)
+            : getDisplayName(incoming.fromUserName);
+
         return (
             <div className={styles.incomingCallContainer}>
                 <div className={styles.incomingCallContent}>
-                    <Avatar 
-                        size={80} 
-                        src={callState.incomingCall.isGroupCall ? callState.incomingCall.groupAvatar : callState.incomingCall.fromUserAvatar}
-                        style={{ marginBottom: "20px", backgroundColor: "#1890ff" }}
-                    >
-                        {!callState.incomingCall.isGroupCall && !callState.incomingCall.fromUserAvatar && 
-                            (getDisplayName(callState.incomingCall.fromUserName)?.charAt(0).toUpperCase() || "U")}
-                        {callState.incomingCall.isGroupCall && !callState.incomingCall.groupAvatar && 
-                            (getDisplayName(callState.incomingCall.groupName)?.charAt(0).toUpperCase() || "G")}
-                    </Avatar>
-                    <h2>
-                        {callState.incomingCall.isGroupCall 
-                            ? getDisplayName(callState.incomingCall.groupName) 
-                            : getDisplayName(callState.incomingCall.fromUserName)}
-                    </h2>
-                    <p className={styles.callTypeLabel}>
-                        {callState.incomingCall.isGroupCall ? "👥 Group " : ""}
-                        {callState.incomingCall.callType === "video" ? "📹 Video Call" : "📞 Voice Call"}
-                    </p>
-                    {callState.incomingCall.isGroupCall && (
+                    <div className={styles.userProfile}>
+                        <Avatar
+                            size={90}
+                            src={avatarSrc}
+                            style={{ backgroundColor: "#7b2fff", fontSize: 36, zIndex: 2, position: "relative" }}
+                        >
+                            {!avatarSrc && (displayName?.charAt(0).toUpperCase() || "U")}
+                        </Avatar>
+                        <div className={styles.ringRipple} />
+                    </div>
+                    <h2 className={styles.userName}>{displayName}</h2>
+                    {incoming.isGroupCall && (
                         <p className={styles.callerSubtitle}>
-                            {getDisplayName(callState.incomingCall.fromUserName)} is calling...
+                            {getDisplayName(incoming.fromUserName)} is calling...
                         </p>
                     )}
+                    <p className={styles.callTypeLabel}>
+                        {incoming.isGroupCall ? "👥 Group " : ""}
+                        {incoming.callType === "video" ? "📹 Video Call" : "📞 Voice Call"}
+                    </p>
 
-                    <Space size="large" style={{ marginTop: "30px" }}>
+                    <Space size={32} style={{ marginTop: "36px" }}>
+                        <Tooltip title="Reject">
+                            <Button
+                                danger
+                                shape="circle"
+                                size="large"
+                                icon={<PhoneOutlined rotate={135} />}
+                                onClick={onReject}
+                                className={styles.rejectBtn}
+                            />
+                        </Tooltip>
                         <Tooltip title="Accept">
                             <Button
                                 type="primary"
                                 shape="circle"
                                 size="large"
                                 className={styles.acceptBtn}
-                                icon={
-                                    callState.incomingCall.callType === "video" ? (
-                                        <VideoCameraOutlined />
-                                    ) : (
-                                        <PhoneOutlined />
-                                    )
-                                }
+                                icon={incoming.callType === "video" ? <VideoCameraOutlined /> : <PhoneOutlined />}
                                 onClick={() => {
-                                    if (callState.incomingCall.callType === "video") {
+                                    if (incoming.callType === "video") {
                                         onAcceptVideo();
                                     } else {
                                         onAcceptVO();
                                     }
                                 }}
-                            />
-                        </Tooltip>
-                        <Tooltip title="Reject">
-                            <Button 
-                                danger 
-                                shape="circle" 
-                                size="large" 
-                                icon={<PhoneOutlined rotate={135} />} 
-                                onClick={onReject}
-                                className={styles.rejectBtn}
                             />
                         </Tooltip>
                     </Space>
@@ -305,37 +250,29 @@ const CallWindow = ({
         );
     }
 
-    // Prepare participants list for grid view
     const allParticipants = [
-        // Local user
         {
             userId: userId,
             name: "You",
             avatar: userInfo?.avatarPath || userInfo?.avatar_path,
             isLocal: true,
             stream: callState.localStream,
-            isCameraOff: callState.isCameraOff,
+            isCameraOff: callState.isCameraOff
         },
-        // Remote participants
         ...(callState.participants || [])
             .filter(p => {
-                const isMe = String(p.userId) === String(userId);
-                if (isMe) console.log("🔍 [CallWindow] Filtering out local user from participants grid:", p.userId);
-                return !isMe;
-            })
+            const isMe = String(p.userId) === String(userId);
+            return !isMe;
+        })
             .map(p => ({
                 ...p,
-                // Prioritize the stream attached to the participant object (for group calls)
-                // Fallback to the global remoteStream if the ID matches (for 1-on-1 calls)
                 stream: p.stream || (String(p.userId) === String(callState.remoteUserId) ? callState.remoteStream : null)
             }))
     ];
 
-    // Active call mode
     if (callState.inCall) {
         return (
             <div className={styles.callContainer}>
-                {/* Audio element for remote audio */}
                 <audio
                     ref={remoteAudioRef}
                     autoPlay
@@ -345,8 +282,6 @@ const CallWindow = ({
                     muted={false}
                     style={{ display: "none" }}
                 />
-
-                {/* Main Content Area - Grid Layout for all calls */}
                 <div className={styles.remoteVideoContainer}>
                     <div className={`${styles.groupCallGrid} ${allParticipants.length === 1 ? styles.single : ""}`}>
                         {allParticipants.map((participant) => (
@@ -355,32 +290,26 @@ const CallWindow = ({
                                 className={`${styles.participantItem} ${participant.isLocal ? styles.local : ""}`}
                             >
                                 {participant.isLocal ? (
-                                    /* Local Participant Rendering */
-                                    participant.isCameraOff ? (
-                                        <div className={styles.participantInfo}>
-                                            <Avatar size={100} src={participant.avatar} icon={<UserOutlined />}>
-                                                {participant.name?.charAt(0).toUpperCase()}
-                                            </Avatar>
-                                            <p className={styles.participantName}>{participant.name}</p>
-                                        </div>
-                                    ) : (
-                                        <video 
-                                            ref={localVideoRef} 
-                                            autoPlay 
-                                            playsInline 
-                                            muted 
-                                            className={styles.participantVideo} 
-                                            style={{ transform: "scaleX(-1)" }} 
-                                        />
-                                    )
+                                    (participant.isCameraOff ? (<div className={styles.participantInfo}>
+                                    <Avatar size={100} src={participant.avatar} icon={<UserOutlined />}>
+                                        {participant.name?.charAt(0).toUpperCase()}
+                                    </Avatar>
+                                    <p className={styles.participantName}>{participant.name}</p>
+                                </div>) : (<video 
+                                        ref={localVideoRef} 
+                                        autoPlay 
+                                        playsInline 
+                                        muted 
+                                        className={styles.participantVideo} 
+                                        style={{ transform: "scaleX(-1)" }} 
+                                    />))
                                 ) : (
-                                    /* Remote Participant Rendering */
-                                    <>
+                                    (<>
                                         {participant.stream && callState.callType === "video" ? (
                                             <video 
                                                 autoPlay 
                                                 playsInline 
-                                                muted={true} // Mute video element as we use dedicated audio element
+                                                muted={true}
                                                 className={styles.participantVideo}
                                                 ref={el => { if (el) el.srcObject = participant.stream; }}
                                             />
@@ -392,7 +321,7 @@ const CallWindow = ({
                                                 <p className={styles.participantName}>{participant.name}</p>
                                             </div>
                                         )}
-                                    </>
+                                    </>)
                                 )}
                                 <div className={styles.participantLabel}>
                                     {participant.name} {participant.isLocal && "(You)"}
@@ -401,9 +330,7 @@ const CallWindow = ({
                         ))}
                     </div>
                 </div>
-
-
-                {/* Call controls */}
+                {}
                 <div className={styles.callControls}>
                     <div className={styles.callInfoGroup}>
                         <span className={styles.callStatusIndicator}></span>
@@ -459,7 +386,6 @@ const CallWindow = ({
         );
     }
 
-    // Outgoing call waiting mode
     if (callState.outgoingCallId && !callState.inCall) {
         if (callState.isGroupCall) {
             return (
@@ -505,8 +431,6 @@ const CallWindow = ({
                             ))}
                         </div>
                     </div>
-                    
-                    {/* Reuse call controls for canceling */}
                     <div className={styles.callControls}>
                         <div className={styles.callInfoGroup}>
                             <span className={`${styles.callStatusIndicator} ${styles.dialing}`}></span>
@@ -533,15 +457,12 @@ const CallWindow = ({
 
         return (
             <div className={styles.outgoingCallContainer}>
-                {/* For video calls, show local preview even before connection */}
                 {callState.callType === "video" && callState.localStream && (
                     <div className={styles.previewBackground}>
                         <video ref={localVideoRef} autoPlay playsInline muted className={styles.fullPreview} />
                     </div>
                 )}
-
                 <div className={styles.outgoingCallContent}>
-                    {/* Show error alert if there's an error */}
                     {callState.error && (
                         <Alert
                             message="Call Failed"

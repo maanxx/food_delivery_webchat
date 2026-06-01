@@ -1,6 +1,6 @@
 import axiosInstance from "@config/axiosInstance";
 
-const BASE_URL = "/api";
+const BASE_URL = "";
 
 export const chatAPI = {
     // ========== CONVERSATIONS ==========
@@ -37,6 +37,19 @@ export const chatAPI = {
 
         return axiosInstance.post(`${BASE_URL}/conversations/group`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
+        });
+    },
+
+    createOrderSupportGroup: async ({ orderId, participantIds }) => {
+        return axiosInstance.post(`${BASE_URL}/conversations/order-support`, {
+            orderId,
+            participantIds,
+        });
+    },
+
+    updateTicketStatus: async (conversationId, ticketStatus) => {
+        return axiosInstance.put(`${BASE_URL}/conversations/${conversationId}/ticket-status`, {
+            ticketStatus,
         });
     },
 

@@ -665,3 +665,23 @@
     opacity: 0.7;
     cursor: not-allowed;
 }
+
+.headerBtn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: #666;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    padding: 0;
+}
+
+.headerBtn:hover {
+    background: #f0f4f8;
+}
